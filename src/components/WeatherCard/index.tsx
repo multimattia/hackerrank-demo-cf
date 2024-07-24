@@ -17,9 +17,11 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
   isFavorite,
 }) => {
   const handleFavoriteClick = () => {
-    if (isFavorite) {
+    if (!isFavorite) {
+      console.log("favorite click");
       onAddFavorite(weather.id);
     } else {
+      console.log("unfavorite click");
       onRemoveFavorite(weather.id);
     }
   };

@@ -81,8 +81,8 @@ const WeatherList: React.FC = () => {
                     <WeatherCard
                       key={city.id}
                       weather={city}
-                      onAddFavorite={handleAddFavorite}
-                      onRemoveFavorite={handleRemoveFavorite}
+                      onAddFavorite={() => handleAddFavorite(city.id)}
+                      onRemoveFavorite={() => handleRemoveFavorite(city.id)}
                       unit={unit}
                       isFavorite={false}
                     />
@@ -117,7 +117,7 @@ const WeatherList: React.FC = () => {
               .map((city) => (
                 <>
                   <WeatherCard
-                    key={city.id}
+                    key={`${city.id}-fav`}
                     weather={city}
                     onAddFavorite={() => handleAddFavorite(city.id)}
                     onRemoveFavorite={() => handleRemoveFavorite(city.id)}
