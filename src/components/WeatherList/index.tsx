@@ -72,22 +72,21 @@ const WeatherList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {search.length !== 0
-              ? data
-                  .filter((city) =>
-                    city.city.toLowerCase().includes(search.toLowerCase()),
-                  )
-                  .map((city) => (
-                    <WeatherCard
-                      key={city.id}
-                      weather={city}
-                      onAddFavorite={() => handleAddFavorite(city.id)}
-                      onRemoveFavorite={() => handleRemoveFavorite(city.id)}
-                      unit={unit}
-                      isFavorite={favorites.has(city.id)}
-                    />
-                  ))
-              : null}
+            {search.length !== 0 &&
+              data
+                .filter((city) =>
+                  city.city.toLowerCase().includes(search.toLowerCase()),
+                )
+                .map((city) => (
+                  <WeatherCard
+                    key={city.id}
+                    weather={city}
+                    onAddFavorite={() => handleAddFavorite(city.id)}
+                    onRemoveFavorite={() => handleRemoveFavorite(city.id)}
+                    unit={unit}
+                    isFavorite={favorites.has(city.id)}
+                  />
+                ))}
           </tbody>
         </table>
         <section className="layout-row align-items-center justify-content-center mt-20 mr-20 ml-20">

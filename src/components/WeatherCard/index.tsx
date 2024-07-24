@@ -40,7 +40,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({
     <tr className="weather-card" data-testid={`weather-card-${weather.id}`}>
       <td>{weather.city}</td>
       <td>
-        {convertedTemp}°{unit}
+        {convertedTemp.toFixed(1)}°{unit}
       </td>
       <td>{weather.description}</td>
       <td>
