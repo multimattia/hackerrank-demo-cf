@@ -84,7 +84,7 @@ const WeatherList: React.FC = () => {
                       onAddFavorite={() => handleAddFavorite(city.id)}
                       onRemoveFavorite={() => handleRemoveFavorite(city.id)}
                       unit={unit}
-                      isFavorite={false}
+                      isFavorite={favorites.has(city.id)}
                     />
                   ))
               : null}
@@ -96,7 +96,7 @@ const WeatherList: React.FC = () => {
             data-testid="unit-change-button"
             className="outlined"
           >
-            Switch to {unit === "C" ? "Fahrenheit" : "Celcius"}
+            Switch to {unit === "C" ? "Fahrenheit" : "Celsius"}
           </button>
         </section>
       </div>
