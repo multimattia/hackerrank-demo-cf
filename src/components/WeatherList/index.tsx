@@ -1,30 +1,61 @@
-import React, { useState } from 'react';
-import { Weather, weatherData } from '../../data/weatherData';
-import WeatherCard from '../WeatherCard';
+import React, { useState } from "react";
+import { Weather, weatherData } from "../../data/weatherData";
+import WeatherCard from "../WeatherCard";
 import "./index.css";
 
+type temperatureUnit = "C" | "F";
+
 const WeatherList: React.FC = () => {
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [data, setData] = useState(weatherData);
+  const [unit, setUnit] = useState<temperatureUnit>("C");
+  const [search, setSearch] = useState("");
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => { };
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
-  const handleClearSearch = () => { };
+  const handleClearSearch = () => {
+    setSearch("");
+  };
 
-  const handleUnitChange = () => { };
+  const handleUnitChange = () => {
+    setUnit((prevUnit) => (prevUnit === "C" ? "F" : "C"));
+  };
 
-  const handleAddFavorite = (cityId: number) => { };
+  const handleAddFavorite = (cityId: number) => {
+    setFavorites((prevFavorites) => new Set(prevFavorites).add(cityId));
+    console.log(favorites);
+  };
 
-  const handleRemoveFavorite = (cityId: number) => { };
+  const handleRemoveFavorite = (cityId: number) => {
+    setFavorites((prevFavorites) => {
+      const newFavorites = new Set(prevFavorites);
+      newFavorites.delete(cityId);
+      return newFavorites;
+    });
+    console.log(favorites);
+  };
+
+  console.log(data);
 
   return (
-    <div className="layout-column align-items-center justify-content-start weather-list" data-testid="weather-list">
+    <div
+      className="layout-column align-items-center justify-content-start weather-list"
+      data-testid="weather-list"
+    >
       <h3>Dashboard</h3>
-      <p className="city-details">Search for Current Temperature in cities like: New York, London, Paris etc.</p>
+      <p className="city-details">
+        Search for Current Temperature in cities like: New York, London, Paris
+        etc.
+      </p>
       <div className="card w-300 pt-20 pb-5 mt-5">
         <section className="layout-row align-items-center justify-content-center mt-20 mr-20 ml-20">
           <input
             type="text"
             placeholder="Search city"
-            onChange={handleSearch}
+            onChange={(e) => handleSearch(e)}
+            value={search || ""}
             data-testid="search-input"
           />
           <button onClick={handleClearSearch} data-testid="clear-search-button">
@@ -41,19 +72,31 @@ const WeatherList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <WeatherCard
-              key={6}
-              weather={weatherData[5]}
-              unit={"C"}
-              onAddFavorite={handleAddFavorite}
-              onRemoveFavorite={handleRemoveFavorite}
-              isFavorite={false}
-            />
+            {search.length !== 0
+              ? data
+                  .filter((city) =>
+                    city.city.toLowerCase().includes(search.toLowerCase()),
+                  )
+                  .map((city) => (
+                    <WeatherCard
+                      key={city.id}
+                      weather={city}
+                      onAddFavorite={handleAddFavorite}
+                      onRemoveFavorite={handleRemoveFavorite}
+                      unit={unit}
+                      isFavorite={false}
+                    />
+                  ))
+              : null}
           </tbody>
         </table>
         <section className="layout-row align-items-center justify-content-center mt-20 mr-20 ml-20">
-          <button onClick={handleUnitChange} data-testid="unit-change-button" className="outlined">
-            Switch to {'Celsius'}
+          <button
+            onClick={handleUnitChange}
+            data-testid="unit-change-button"
+            className="outlined"
+          >
+            Switch to {unit === "C" ? "Fahrenheit" : "Celcius"}
           </button>
         </section>
       </div>
@@ -69,6 +112,20 @@ const WeatherList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
+            {data
+              .filter((city) => favorites.has(city.id))
+              .map((city) => (
+                <>
+                  <WeatherCard
+                    key={city.id}
+                    weather={city}
+                    onAddFavorite={() => handleAddFavorite(city.id)}
+                    onRemoveFavorite={() => handleRemoveFavorite(city.id)}
+                    unit={unit}
+                    isFavorite={true}
+                  />
+                </>
+              ))}
           </tbody>
         </table>
       </div>
