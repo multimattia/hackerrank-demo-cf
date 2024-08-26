@@ -3,17 +3,41 @@ import { Weather, weatherData } from '../../data/weatherData';
 import WeatherCard from '../WeatherCard';
 import "./index.css";
 
+type TemperatureUnit = "C" | "F";
+
 const WeatherList: React.FC = () => {
 
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => { };
 
-  const handleClearSearch = () => { };
+  const [search, setSearch] = useState("")
+  const [data, setData] = useState(weatherData);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set())
+  const [unit, setUnit] = useState<TemperatureUnit>("C");
 
-  const handleUnitChange = () => { };
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
-  const handleAddFavorite = (cityId: number) => { };
+  const handleClearSearch = () => {
+    setSearch("")
+   };
 
-  const handleRemoveFavorite = (cityId: number) => { };
+  const handleUnitChange = () => {
+    setUnit((prevUnit) => (prevUnit === "C" ? "F" : "C"));
+  };
+
+  const handleAddFavorite = (cityId: number) => {
+    setFavorites((prevFavorites) =>
+      new Set(prevFavorites).add(cityId)
+    );
+  };
+
+  const handleRemoveFavorite = (cityId: number) => {
+    setFavorites((prevFavorites) => {
+      const newFavorites = new Set(prevFavorites);
+      newFavorites.delete(cityId);
+      return newFavorites
+    })
+   };
 
   return (
     <div className="layout-column align-items-center justify-content-start weather-list" data-testid="weather-list">
@@ -25,6 +49,7 @@ const WeatherList: React.FC = () => {
             type="text"
             placeholder="Search city"
             onChange={handleSearch}
+            value={search || ""}
             data-testid="search-input"
           />
           <button onClick={handleClearSearch} data-testid="clear-search-button">
@@ -41,19 +66,23 @@ const WeatherList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
+          {search.length !== 0 &&
+          data.filter((city) => city.city.toLowerCase().includes(search.toLowerCase()))
+          .map((item) =>
             <WeatherCard
-              key={6}
-              weather={weatherData[5]}
-              unit={"C"}
-              onAddFavorite={handleAddFavorite}
-              onRemoveFavorite={handleRemoveFavorite}
-              isFavorite={false}
+              key={item.id}
+              weather={item}
+              unit={unit}
+              onAddFavorite={() => handleAddFavorite(item.id)}
+              onRemoveFavorite={() => handleRemoveFavorite(item.id)}
+              isFavorite={favorites.has(item.id)}
             />
+          )}
           </tbody>
         </table>
         <section className="layout-row align-items-center justify-content-center mt-20 mr-20 ml-20">
           <button onClick={handleUnitChange} data-testid="unit-change-button" className="outlined">
-            Switch to {'Celsius'}
+            Switch to {unit === "C" ? "Fahrenheit" : "Celsius"}
           </button>
         </section>
       </div>
@@ -69,6 +98,18 @@ const WeatherList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
+          {data.filter((city) => favorites.has(city.id))
+          .reverse()
+          .map((city) =>
+          <WeatherCard
+          key={city.id}
+          weather={city}
+          onAddFavorite={() => handleAddFavorite(city.id)}
+          onRemoveFavorite={() => handleRemoveFavorite(city.id)}
+          unit={unit}
+          isFavorite={true}
+          />
+          )}
           </tbody>
         </table>
       </div>
