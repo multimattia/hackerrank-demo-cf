@@ -49,7 +49,7 @@ const WeatherList: React.FC = () => {
             type="text"
             placeholder="Search city"
             onChange={handleSearch}
-            value={search || ""}
+            value={search}
             data-testid="search-input"
           />
           <button onClick={handleClearSearch} data-testid="clear-search-button">
